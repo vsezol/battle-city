@@ -1,6 +1,6 @@
 import SpriteSheet from './modules/sprite-sheet'
 import Bullet from './modules/bullet'
-import {DefaultTank} from './modules/tanks'
+import {PlayerTank, EnemyTank} from './modules/tanks'
 import Game from './modules/game'
 import Block from './modules/block'
 
@@ -21,12 +21,14 @@ canvas.width = gameW
 canvas.height = gameH
 canvas.style.background = gameBg
 
-const tanksSprites = new SpriteSheet(tanksSRC, 75, 300, 0, 3, tankSize)
-const bulletsSprites = new SpriteSheet(bulletSRC, 17, 17, 0, 0, bulletSize)
-const blocksSprites = new SpriteSheet(bulletSRC, 17, 17, 0, 0, bulletSize)
+const tanksSprites = new SpriteSheet(tanksSRC, 450, 300, tankSize)
+const bulletsSprites = new SpriteSheet(bulletSRC, 17, 17, bulletSize)
+const blocksSprites = new SpriteSheet(bulletSRC, 17, 17, bulletSize)
 
-let playerTank = new DefaultTank(tankSize, bulletSize)
-let game = new Game(gameW, gameH, gameBg, [playerTank], [], [])
+const playerTank = new PlayerTank(tankSize, bulletSize)
+const enemyTank = new EnemyTank(tankSize, bulletSize)
+enemyTank.setCords(400,400)
+let game = new Game(gameW, gameH, gameBg, [playerTank, enemyTank], [], [])
 
 async function loadGame() {
 	await tanksSprites.onLoad()
@@ -39,4 +41,5 @@ function update() {
 	game.clearAll(context)
 	game.drawAll(context, tanksSprites, bulletsSprites)
 	game.watchKeyBoard()
+	game.checkCollisions()
 }

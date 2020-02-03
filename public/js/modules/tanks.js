@@ -6,6 +6,8 @@ class Tank {
 		this.direction = direction
 		this.x = 256
 		this.y = 256
+		this.lastX = this.x
+		this.lastY = this.y
 		this.fireDelay = 40
 		this.lastFireTime = 0
 		this.bulletSpeed = 6
@@ -16,6 +18,10 @@ class Tank {
 
 	getData() {
 		return [this.type, this.direction, this.x, this.y]
+	}
+
+	getCords() {
+		return [this.x, this.y]
 	}
 
 	getBullets() {
@@ -116,20 +122,20 @@ class Tank {
 	}
 }
 
-class DefaultTank extends Tank {
-	constructor(size, bulletSize) {
-		super(size, bulletSize)
+class PlayerTank extends Tank {
+	constructor(size, bulletSize, id) {
+		super(size, bulletSize, id)
 		this.type = 0
 		this.speed = 4
 	}
 }
 
-class FastTank extends DefaultTank {
+class EnemyTank extends Tank {
 	constructor(size, bulletSize) {
 		super(size, bulletSize)
-		this.type = 1
-		this.speed = 8
+		this.type = 3
+		this.speed = 4
 	}
 }
 
-export { Tank, DefaultTank, FastTank }
+export {PlayerTank, EnemyTank}

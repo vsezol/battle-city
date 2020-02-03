@@ -89,7 +89,41 @@ class Game {
 	}
 
 	userMove(direction) {
+		this.tanks[0].lastX = this.tanks[0].x
+		this.tanks[0].lastY = this.tanks[0].y
 		this.tanks[0].move(direction)
+	}
+
+	checkCollisions() {
+		const len = this.tanks.length
+		const tanks = this.tanks
+		const size = tanks[0].size
+		const checked = []
+		
+		for (let i = 0; i < len; i++) {
+			for (let j = 0; j < len; j++) {
+				if (i == j) continue
+				if (
+					checked.includes(i + '' + j) ||
+					checked.includes(j + '' + i)
+				)
+					continue
+
+				const iC = [tanks[i].x + size / 2, tanks[i].y + size / 2]
+				const jC = [tanks[j].x + size / 2, tanks[j].y + size / 2]
+
+				const dX = iC[0] - jC[0]
+				const dY = iC[1] - jC[1]
+
+				if (Math.abs(dX) <= size && Math.abs(dY) <= size) {
+					console.log('collision')
+					tanks[i].x = tanks[i].lastX
+					tanks[i].y = tanks[i].lastY
+				}
+
+				checked.push(i + '' + j)
+			}
+		}
 	}
 }
 

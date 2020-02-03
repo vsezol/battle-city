@@ -1,9 +1,7 @@
 class SpriteSheet {
-	constructor(src, w, h, x, y, size) {
+	constructor(src, w, h, size) {
 		this.w = w
 		this.h = h
-		this.x = x
-		this.y = y
 		this.size = size
 		this.src = src
 	}
