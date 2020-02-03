@@ -95,6 +95,7 @@ class Game {
 	}
 
 	checkCollisions() {
+		//tanks collisions
 		const len = this.tanks.length
 		const tanks = this.tanks
 		const size = tanks[0].size

@@ -10,7 +10,7 @@ class Tank {
 		this.lastY = this.y
 		this.fireDelay = 40
 		this.lastFireTime = 0
-		this.bulletSpeed = 6
+		this.bulletSpeed = 5
 		this.bulletSize = bulletSize
 		this.size = size
 		this.bullets = []
