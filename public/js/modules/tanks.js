@@ -1,21 +1,23 @@
 import Bullet from './bullet'
 
 class Tank {
-	constructor(size, bulletSize, direction = 0) {
+	constructor(size, bulletSize, id, direction = 0) {
 		this.type = 999
 		this.direction = direction
 		this.x = 256
 		this.y = 256
 		this.lastX = this.x
 		this.lastY = this.y
-		this.fireDelay = 40
+		this.fireDelay = 60
 		this.lastFireTime = 0
-		this.bulletSpeed = 5
+		this.bulletSpeed = 4
 		this.bulletSize = bulletSize
 		this.bulletDamage = 1
 		this.size = size
 		this.bullets = []
 		this.hp = 2
+		this.id = id
+		this.banDirection = [0, 0, 0, 0]
 	}
 
 	getData() {
@@ -117,14 +119,68 @@ class Tank {
 		this.direction = direction
 	}
 
+	checkDirection(otherTanks) {
+		if (this.direction == 0) {
+			otherTanks.forEach((tank, i) => {
+				if (
+					Math.abs(this.x - tank.x) < this.size &&
+					this.y - tank.y > 0 &&
+					Math.abs(this.y - tank.y) < this.size + this.speed
+				) {
+					this.banDirection[0] = 1
+				} else {
+					this.banDirection[0] = 0
+				}
+			})
+		} else if (this.direction == 2) {
+			otherTanks.forEach((tank, i) => {
+				if (
+					Math.abs(this.x - tank.x) < this.size &&
+					this.y - tank.y < 0 &&
+					Math.abs(this.y - tank.y) < this.size + this.speed
+				) {
+					this.banDirection[2] = 1
+				} else {
+					this.banDirection[2] = 0
+				}
+			})
+		} else if (this.direction == 1) {
+			otherTanks.forEach((tank, i) => {
+				if (
+					Math.abs(this.y - tank.y) < this.size &&
+					this.x - tank.x < 0 &&
+					Math.abs(this.x - tank.x) < this.size + this.speed
+				) {
+					this.banDirection[1] = 1
+				} else {
+					this.banDirection[1] = 0
+				}
+			})
+		} else if (this.direction == 3) {
+			otherTanks.forEach((tank, i) => {
+				if (
+					Math.abs(this.y - tank.y) < this.size &&
+					this.x - tank.x > 0 &&
+					Math.abs(this.x - tank.x) < this.size + this.speed
+				) {
+					this.banDirection[3] = 1
+				} else {
+					this.banDirection[3] = 0
+				}
+			})
+		}
+	}
+
 	move(direction) {
-		if (direction == 0) {
+		this.lastX = this.x
+		this.lastY = this.y
+		if (direction == 0 && !this.banDirection[0]) {
 			this.y -= this.speed
-		} else if (direction == 2) {
+		} else if (direction == 2 && !this.banDirection[2]) {
 			this.y += this.speed
-		} else if (direction == 1) {
+		} else if (direction == 1 && !this.banDirection[1]) {
 			this.x += this.speed
-		} else if (direction == 3) {
+		} else if (direction == 3 && !this.banDirection[3]) {
 			this.x -= this.speed
 		}
 	}
@@ -150,11 +206,49 @@ class PlayerTank extends Tank {
 }
 
 class EnemyTank extends Tank {
-	constructor(size, bulletSize) {
-		super(size, bulletSize)
+	constructor(size, bulletSize, id) {
+		super(size, bulletSize, id)
 		this.type = 3
-		this.speed = 4
+		this.speed = 2
 	}
+
+	findTankOnDirection(uTank) {
+		if (this.direction == 0) {
+			if (
+				Math.abs(this.x - uTank.x) < this.size &&
+				this.y - uTank.y > 0
+			) {
+				return true
+			}
+		} else if (this.direction == 2) {
+			if (
+				Math.abs(this.x - uTank.x) < this.size &&
+				this.y - uTank.y < 0
+			) {
+				return true
+			}
+		} else if (this.direction == 1) {
+			if (
+				Math.abs(this.y - uTank.y) < this.size &&
+				this.x - uTank.x < 0
+			) {
+				return true
+			}
+		} else if (this.direction == 3) {
+			if (
+				Math.abs(this.y - uTank.y) < this.size &&
+				this.x - uTank.x > 0
+			) {
+				return true
+			}
+		} else {
+			return false
+		}
+	}
+
+	setTarget() {}
+
+	goToTarget() {}
 }
 
-export {PlayerTank, EnemyTank}
+export { PlayerTank, EnemyTank }

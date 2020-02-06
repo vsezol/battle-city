@@ -25,13 +25,13 @@ const tanksSprites = new SpriteSheet(tanksSRC, 450, 300, tankSize)
 const bulletsSprites = new SpriteSheet(bulletSRC, 17, 17, bulletSize)
 const blocksSprites = new SpriteSheet(bulletSRC, 17, 17, bulletSize)
 
-const playerTank = new PlayerTank(tankSize, bulletSize)
+const playerTank = new PlayerTank(tankSize, bulletSize, 'player')
 
-const enemyTank1 = new EnemyTank(tankSize, bulletSize)
-enemyTank1.setCords(400,400)
-const enemyTank2 = new EnemyTank(tankSize, bulletSize)
+const enemyTank1 = new EnemyTank(tankSize, bulletSize, 'enemy 1')
+enemyTank1.setCords(256,400)
+const enemyTank2 = new EnemyTank(tankSize, bulletSize, 'enemy 2')
 enemyTank2.setCords(50,50)
-
+enemyTank2.rotate(2)
 let game = new Game(gameW, gameH, gameBg, [playerTank, enemyTank1, enemyTank2], [], [])
 
 async function loadGame() {
@@ -44,7 +44,7 @@ loadGame()
 function update() {
 	game.clearAll(context)
 	game.drawAll(context, tanksSprites, bulletsSprites)
-	game.watchKeyBoard()
 	game.enemyBrain()
+	game.watchKeyBoard()
 	game.checkCollisions()
 }

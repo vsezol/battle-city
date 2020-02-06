@@ -97,41 +97,17 @@ class Game {
 	}
 
 	checkTanksCollisions() {
-		const len = this.tanks.length
-		const tanks = this.tanks
-		const size = tanks[0].size
-		const checked = []
-
-		for (let i = 0; i < len; i++) {
-			for (let j = 0; j < len; j++) {
-				if (i == j) continue
-				if (
-					checked.includes(i + '' + j) ||
-					checked.includes(j + '' + i)
-				)
-					continue
-
-				const iC = tanks[i].getCenter()
-				const jC = tanks[j].getCenter()
-
-				const dX = iC[0] - jC[0]
-				const dY = iC[1] - jC[1]
-
-				if (Math.abs(dX) <= size && Math.abs(dY) <= size) {
-					tanks[i].x = tanks[i].lastX
-					tanks[i].y = tanks[i].lastY
-				}
-
-				checked.push(i + '' + j)
-			}
-		}
+		const tanks = [...this.tanks]
+		tanks.forEach((tank, i, tanks) => {
+			tank.checkDirection([...tanks.slice(0, i), ...tanks.slice(i + 1)])
+		})
 	}
 
 	checkBulletsCollisions() {
 		const tanks = this.tanks
-		const len = tanks.length
 		const userBullets = tanks[0].bullets
 		const tankSize = tanks[0].size
+
 		userBullets.forEach((bullet, i, bullets) => {
 			tanks.slice(1).forEach((tank, j, tanks) => {
 				const tankC = tank.getCenter()
@@ -140,15 +116,36 @@ class Game {
 				const dX = tankC[0] - bulletC[0]
 				const dY = tankC[1] - bulletC[1]
 				if (
-					Math.abs(dX) <= tankSize / 2 + bullet.size / 2 &&
-					Math.abs(dY) <= tankSize / 2 + bullet.size / 2
+					Math.abs(dX) <= tankSize / 2 /*+ bullet.size / 2 */&&
+					Math.abs(dY) <= tankSize / 2 /*+ bullet.size / 2*/
 				) {
 					bullets.splice(i, 1)
 					tank.getDamage(bullet.damage)
-					console.log('Блять попал')
 				}
 			})
 		})
+
+		tanks.slice(1).forEach((tank, i, tanks) => {
+			tank.bullets.forEach((bullet, j, bullets) => {
+				const tankC = this.tanks[0].getCenter()
+				const bulletC = bullet.getCenter()
+
+				const dX = tankC[0] - bulletC[0]
+				const dY = tankC[1] - bulletC[1]
+
+				if (
+					Math.abs(dX) <= tankSize / 2 /*+ bullet.size / 2*/ &&
+					Math.abs(dY) <= tankSize / 2 /*+ bullet.size / 2*/
+				) {
+					bullets.splice(j, 1)
+					this.tanks[0].getDamage(bullet.damage)
+				}
+			})
+		})
+		if (this.tanks[0].hp <= 0) {
+			alert('you died')
+			location.reload()
+		}
 		this.tanks = this.tanks.filter(tank => tank.hp > 0)
 	}
 
@@ -161,8 +158,8 @@ class Game {
 		const userTank = this.tanks[0]
 		const tankSize = this.tanks[0].size
 		const enemyTanks = this.tanks.slice(1)
-		enemyTanks.forEach( (eTank, i, eTanks) => {
-
+		let iter = 0
+		enemyTanks.forEach((eTank, i, eTanks) => {
 			const userCords = userTank.getCenter()
 			const userX = userCords[0]
 			const userY = userCords[1]
@@ -172,22 +169,9 @@ class Game {
 			const eY = eCords[1]
 
 			const randDirection = Math.random().toFixed(1)
-			// eTank.move(eTank.direction)
-			// if (randDirection > 0.89) {
-			// 	eTank.move(eTank.direction)
-			// } else {
-			// 	eTank.direction = Math.round((Math.random()*3))
-			// 	// eTank.move(eTank.direction)
-			// }
-
-			if (Math.abs(userX - eX) <= tankSize ) {
-				if (
-					this.timer - eTank.lastFireTime >
-					eTank.fireDelay
-				) {
-					eTank.lastFireTime = this.timer
-					eTank.fire()
-				}
+			if (this.timer - eTank.lastFireTime > eTank.fireDelay && eTank.findTankOnDirection(userTank)) {
+				eTank.lastFireTime = this.timer
+				eTank.fire()
 			}
 		})
 	}
