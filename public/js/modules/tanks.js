@@ -174,6 +174,7 @@ class Tank {
 	move(direction) {
 		this.lastX = this.x
 		this.lastY = this.y
+		console.log(this.banDirection)
 		if (direction == 0 && !this.banDirection[0]) {
 			this.y -= this.speed
 		} else if (direction == 2 && !this.banDirection[2]) {

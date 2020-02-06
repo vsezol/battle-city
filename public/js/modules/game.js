@@ -97,7 +97,7 @@ class Game {
 	}
 
 	checkTanksCollisions() {
-		const tanks = [...this.tanks]
+		const tanks = this.tanks
 		tanks.forEach((tank, i, tanks) => {
 			tank.checkDirection([...tanks.slice(0, i), ...tanks.slice(i + 1)])
 		})
@@ -169,9 +169,10 @@ class Game {
 			const eY = eCords[1]
 
 			const randDirection = Math.random().toFixed(1)
+			// eTank.move(eTank.direction)
 			if (this.timer - eTank.lastFireTime > eTank.fireDelay && eTank.findTankOnDirection(userTank)) {
 				eTank.lastFireTime = this.timer
-				eTank.fire()
+				// eTank.fire()
 			}
 		})
 	}
