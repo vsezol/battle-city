@@ -12,12 +12,18 @@ class Tank {
 		this.lastFireTime = 0
 		this.bulletSpeed = 5
 		this.bulletSize = bulletSize
+		this.bulletDamage = 1
 		this.size = size
 		this.bullets = []
+		this.hp = 2
 	}
 
 	getData() {
 		return [this.type, this.direction, this.x, this.y]
+	}
+
+	getCenter() {
+		return [this.x + this.size / 2, this.y + this.size / 2]
 	}
 
 	getCords() {
@@ -37,7 +43,9 @@ class Tank {
 						parseInt(this.size / 2) -
 						parseInt(this.bulletSize / 2),
 					this.y - 10,
-					this.bulletSpeed
+					this.bulletSpeed,
+					this.bulletDamage,
+					this.bulletSize
 				)
 			)
 		} else if (this.direction == 2) {
@@ -48,7 +56,9 @@ class Tank {
 						parseInt(this.size / 2) -
 						parseInt(this.bulletSize / 2),
 					this.y + this.size - 10,
-					this.bulletSpeed
+					this.bulletSpeed,
+					this.bulletDamage,
+					this.bulletSize
 				)
 			)
 		} else if (this.direction == 1) {
@@ -59,7 +69,9 @@ class Tank {
 					this.y +
 						parseInt(this.size / 2) -
 						parseInt(this.bulletSize / 2),
-					this.bulletSpeed
+					this.bulletSpeed,
+					this.bulletDamage,
+					this.bulletSize
 				)
 			)
 		} else if (this.direction == 3) {
@@ -70,11 +82,12 @@ class Tank {
 					this.y +
 						parseInt(this.size / 2) -
 						parseInt(this.bulletSize / 2),
-					this.bulletSpeed
+					this.bulletSpeed,
+					this.bulletDamage,
+					this.bulletSize
 				)
 			)
 		}
-		console.log(this.bullets)
 	}
 
 	limitBullets(w, h) {
@@ -119,6 +132,12 @@ class Tank {
 	setCords(x, y) {
 		this.x = x
 		this.y = y
+		this.lastX = x
+		this.lastY = y
+	}
+
+	getDamage(damage) {
+		this.hp -= damage
 	}
 }
 

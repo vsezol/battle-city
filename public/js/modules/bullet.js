@@ -1,9 +1,11 @@
 class Bullet {
-	constructor(direction, x, y, speed) {
+	constructor(direction, x, y, speed, damage, size) {
 		this.direction = direction
 		this.x = x
 		this.y = y
 		this.speed = speed
+		this.damage = damage
+		this.size = size
 	}
 
 	move() {
@@ -20,6 +22,10 @@ class Bullet {
 
 	getCords() {
 		return [this.x, this.y]
+	}
+
+	getCenter() {
+		return [this.x + this.size / 2, this.y + this.size / 2]
 	}
 }
 
