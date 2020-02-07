@@ -116,8 +116,8 @@ class Game {
 				const dX = tankC[0] - bulletC[0]
 				const dY = tankC[1] - bulletC[1]
 				if (
-					Math.abs(dX) <= tankSize / 2 /*+ bullet.size / 2 */&&
-					Math.abs(dY) <= tankSize / 2 /*+ bullet.size / 2*/
+					Math.abs(dX) <= tankSize / 2 + bullet.size / 2 &&
+					Math.abs(dY) <= tankSize / 2 + bullet.size / 2
 				) {
 					bullets.splice(i, 1)
 					tank.getDamage(bullet.damage)
@@ -134,8 +134,8 @@ class Game {
 				const dY = tankC[1] - bulletC[1]
 
 				if (
-					Math.abs(dX) <= tankSize / 2 /*+ bullet.size / 2*/ &&
-					Math.abs(dY) <= tankSize / 2 /*+ bullet.size / 2*/
+					Math.abs(dX) <= tankSize / 2 + bullet.size / 2 &&
+					Math.abs(dY) <= tankSize / 2 + bullet.size / 2
 				) {
 					bullets.splice(j, 1)
 					this.tanks[0].getDamage(bullet.damage)
@@ -168,11 +168,28 @@ class Game {
 			const eX = eCords[0]
 			const eY = eCords[1]
 
-			const randDirection = Math.random().toFixed(1)
 			eTank.move(eTank.direction)
-			if (this.timer - eTank.lastFireTime > eTank.fireDelay && eTank.findTankOnDirection(userTank)) {
-				eTank.lastFireTime = this.timer
-				// eTank.fire()
+			eTank.setTarget(userX, userY)
+			const friends = [...eTanks]
+			friends.splice(i, 1)
+			const dir = eTank.findFriendOnDirection(friends)
+			if (
+				this.timer - eTank.lastFireTime > eTank.fireDelay &&
+				eTank.findTankOnDirection(userTank)
+			) {
+				if (eTank.direction == 0 && dir != 0 && dir === undefined) {
+					eTank.lastFireTime = this.timer
+					eTank.fire()
+				} else if (eTank.direction == 2 && dir != 2 && dir === undefined) {
+					eTank.lastFireTime = this.timer
+					eTank.fire()
+				} else if (eTank.direction == 1 && dir != 1 && dir === undefined) {
+					eTank.lastFireTime = this.timer
+					eTank.fire()
+				} else if (eTank.direction == 3 && dir != 3 && dir === undefined) {
+					eTank.lastFireTime = this.timer
+					eTank.fire()
+				}
 			}
 		})
 	}

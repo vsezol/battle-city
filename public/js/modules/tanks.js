@@ -8,9 +8,7 @@ class Tank {
 		this.y = 256
 		this.lastX = this.x
 		this.lastY = this.y
-		this.fireDelay = 60
 		this.lastFireTime = 0
-		this.bulletSpeed = 4
 		this.bulletSize = bulletSize
 		this.bulletDamage = 1
 		this.size = size
@@ -121,6 +119,10 @@ class Tank {
 
 	checkDirection(otherTanks) {
 		if (this.direction == 0) {
+			this.banDirection[0] = this.banDirection[0].splice(
+				0,
+				otherTanks.length
+			)
 			otherTanks.forEach((tank, i) => {
 				if (
 					Math.abs(this.x - tank.x) < this.size &&
@@ -133,7 +135,10 @@ class Tank {
 				}
 			})
 		} else if (this.direction == 2) {
-			this.banDirection[2].splice(0, otherTanks.length)
+			this.banDirection[2] = this.banDirection[2].splice(
+				0,
+				otherTanks.length
+			)
 			otherTanks.forEach((tank, i) => {
 				if (
 					Math.abs(this.x - tank.x) < this.size &&
@@ -146,7 +151,10 @@ class Tank {
 				}
 			})
 		} else if (this.direction == 1) {
-			this.banDirection[1].splice(0, otherTanks.length)
+			this.banDirection[1] = this.banDirection[1].splice(
+				0,
+				otherTanks.length
+			)
 			otherTanks.forEach((tank, i) => {
 				if (
 					Math.abs(this.y - tank.y) < this.size &&
@@ -159,7 +167,10 @@ class Tank {
 				}
 			})
 		} else if (this.direction == 3) {
-			this.banDirection[3].splice(0, otherTanks.length)
+			this.banDirection[3] = this.banDirection[3].splice(
+				0,
+				otherTanks.length
+			)
 			otherTanks.forEach((tank, i) => {
 				if (
 					Math.abs(this.y - tank.y) < this.size &&
@@ -220,7 +231,9 @@ class PlayerTank extends Tank {
 	constructor(size, bulletSize, id) {
 		super(size, bulletSize, id)
 		this.type = 0
-		this.speed = 4
+		this.speed = 10
+		this.bulletSpeed = 4
+		this.fireDelay = 60
 	}
 }
 
@@ -229,34 +242,71 @@ class EnemyTank extends Tank {
 		super(size, bulletSize, id)
 		this.type = 3
 		this.speed = 2
+		this.bulletSpeed = 4
+		this.fireDelay = 120
+	}
+
+	findFriendOnDirection(tanks) {
+		for(let i = 0; i <= 0; i++) {
+			const tank = tanks[i]
+			if (this.direction == 0) {
+				if (
+					Math.abs(this.x - tank.x) <= this.size &&
+					this.y - tank.y >= 0
+				) {
+					return 0
+				}
+			} else if (this.direction == 2) {
+				if (
+					Math.abs(this.x - tank.x) <= this.size &&
+					this.y - tank.y <= 0
+				) {
+					return 2
+				}
+			} else if (this.direction == 1) {
+				if (
+					Math.abs(this.y - tank.y) <= this.size &&
+					this.x - tank.x <= 0
+				) {
+					return 1
+				}
+			} else if (this.direction == 3) {
+				if (
+					Math.abs(this.y - tank.y) <= this.size &&
+					this.x - tank.x >= 0
+				) {
+					return 3
+				}
+			}
+		}
 	}
 
 	findTankOnDirection(uTank) {
 		if (this.direction == 0) {
 			if (
-				Math.abs(this.x - uTank.x) < this.size &&
-				this.y - uTank.y > 0
+				Math.abs(this.x - uTank.x) <= this.size &&
+				this.y - uTank.y >= 0
 			) {
 				return true
 			}
 		} else if (this.direction == 2) {
 			if (
-				Math.abs(this.x - uTank.x) < this.size &&
-				this.y - uTank.y < 0
+				Math.abs(this.x - uTank.x) <= this.size &&
+				this.y - uTank.y <= 0
 			) {
 				return true
 			}
 		} else if (this.direction == 1) {
 			if (
-				Math.abs(this.y - uTank.y) < this.size &&
-				this.x - uTank.x < 0
+				Math.abs(this.y - uTank.y) <= this.size &&
+				this.x - uTank.x <= 0
 			) {
 				return true
 			}
 		} else if (this.direction == 3) {
 			if (
-				Math.abs(this.y - uTank.y) < this.size &&
-				this.x - uTank.x > 0
+				Math.abs(this.y - uTank.y) <= this.size &&
+				this.x - uTank.x >= 0
 			) {
 				return true
 			}
@@ -265,7 +315,29 @@ class EnemyTank extends Tank {
 		}
 	}
 
-	setTarget() {}
+	setTarget(tX, tY) {
+		const cords = this.getCenter()
+		const cX = cords[0]
+		const cY = cords[1]
+
+		const dX = cX - tX
+		const dY = cY - tY
+
+		if (dX > 0 && dY < 0) {
+			// левый нижний
+			const rand = Math.random()
+			this.rotate(3)
+		} else if (dX < 0 && dY < 0) {
+			// правый нижний
+			this.rotate(2)
+		} else if (dX > 0 && dY > 0) {
+			this.rotate(0)
+			// левый верхний
+		} else if (dX < 0 && dY > 0) {
+			this.rotate(1)
+			// правый верхний
+		}
+	}
 
 	goToTarget() {}
 }
