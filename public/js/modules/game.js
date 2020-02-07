@@ -169,7 +169,7 @@ class Game {
 			const eY = eCords[1]
 
 			const randDirection = Math.random().toFixed(1)
-			// eTank.move(eTank.direction)
+			eTank.move(eTank.direction)
 			if (this.timer - eTank.lastFireTime > eTank.fireDelay && eTank.findTankOnDirection(userTank)) {
 				eTank.lastFireTime = this.timer
 				// eTank.fire()

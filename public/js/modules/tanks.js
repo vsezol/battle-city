@@ -17,7 +17,7 @@ class Tank {
 		this.bullets = []
 		this.hp = 2
 		this.id = id
-		this.banDirection = [0, 0, 0, 0]
+		this.banDirection = [[], [], [], []]
 	}
 
 	getData() {
@@ -127,45 +127,48 @@ class Tank {
 					this.y - tank.y > 0 &&
 					Math.abs(this.y - tank.y) < this.size + this.speed
 				) {
-					this.banDirection[0] = 1
+					this.banDirection[0].unshift(1)
 				} else {
-					this.banDirection[0] = 0
+					this.banDirection[0].unshift(0)
 				}
 			})
 		} else if (this.direction == 2) {
+			this.banDirection[2].splice(0, otherTanks.length)
 			otherTanks.forEach((tank, i) => {
 				if (
 					Math.abs(this.x - tank.x) < this.size &&
 					this.y - tank.y < 0 &&
 					Math.abs(this.y - tank.y) < this.size + this.speed
 				) {
-					this.banDirection[2] = 1
+					this.banDirection[2].unshift(1)
 				} else {
-					this.banDirection[2] = 0
+					this.banDirection[2].unshift(0)
 				}
 			})
 		} else if (this.direction == 1) {
+			this.banDirection[1].splice(0, otherTanks.length)
 			otherTanks.forEach((tank, i) => {
 				if (
 					Math.abs(this.y - tank.y) < this.size &&
 					this.x - tank.x < 0 &&
 					Math.abs(this.x - tank.x) < this.size + this.speed
 				) {
-					this.banDirection[1] = 1
+					this.banDirection[1].unshift(1)
 				} else {
-					this.banDirection[1] = 0
+					this.banDirection[1].unshift(0)
 				}
 			})
 		} else if (this.direction == 3) {
+			this.banDirection[3].splice(0, otherTanks.length)
 			otherTanks.forEach((tank, i) => {
 				if (
 					Math.abs(this.y - tank.y) < this.size &&
 					this.x - tank.x > 0 &&
 					Math.abs(this.x - tank.x) < this.size + this.speed
 				) {
-					this.banDirection[3] = 1
+					this.banDirection[3].unshift(1)
 				} else {
-					this.banDirection[3] = 0
+					this.banDirection[3].unshift(0)
 				}
 			})
 		}
@@ -174,14 +177,29 @@ class Tank {
 	move(direction) {
 		this.lastX = this.x
 		this.lastY = this.y
-		console.log(this.banDirection)
-		if (direction == 0 && !this.banDirection[0]) {
+		if (
+			direction == 0 &&
+			(!this.banDirection[0].length ||
+				this.banDirection[0].reduce((p, c) => (p += c)) == 0)
+		) {
 			this.y -= this.speed
-		} else if (direction == 2 && !this.banDirection[2]) {
+		} else if (
+			direction == 2 &&
+			(!this.banDirection[2].length ||
+				this.banDirection[2].reduce((p, c) => (p += c)) == 0)
+		) {
 			this.y += this.speed
-		} else if (direction == 1 && !this.banDirection[1]) {
+		} else if (
+			direction == 1 &&
+			(!this.banDirection[1].length ||
+				this.banDirection[1].reduce((p, c) => (p += c)) == 0)
+		) {
 			this.x += this.speed
-		} else if (direction == 3 && !this.banDirection[3]) {
+		} else if (
+			direction == 3 &&
+			(!this.banDirection[3].length ||
+				this.banDirection[3].reduce((p, c) => (p += c)) == 0)
+		) {
 			this.x -= this.speed
 		}
 	}
