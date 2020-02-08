@@ -1,11 +1,12 @@
 class Bullet {
-	constructor(direction, x, y, speed, damage, size) {
+	constructor(direction, x, y, speed, damage, size, id) {
 		this.direction = direction
 		this.x = x
 		this.y = y
 		this.speed = speed
 		this.damage = damage
 		this.size = size
+		this.id = id
 	}
 
 	move() {

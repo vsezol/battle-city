@@ -18,17 +18,40 @@ class Game {
 			if (y >= this.h - item.size) {
 				y = this.h - item.size
 				item.setCords(x, y)
+				if (i != 0) {
+					const rotates = [0, 1, 3]
+					const rd = rotates[Math.round(Math.random() * 2)]
+					item.rotate(rd)
+					item.setTarget(item.randomDistance())
+				}
 			} else if (y <= 0) {
 				y = 0
 				item.setCords(x, y)
+				if (i != 0) {
+					const rotates = [2, 1, 3]
+					const rd = rotates[Math.round(Math.random() * 2)]
+					item.rotate(rd)
+					item.setTarget(item.randomDistance())
+				}
 			}
-
 			if (x >= this.w - item.size) {
 				x = this.w - item.size
 				item.setCords(x, y)
+				if (i != 0) {
+					const rotates = [0, 2, 3]
+					const rd = rotates[Math.round(Math.random() * 2)]
+					item.rotate(rd)
+					item.setTarget(item.randomDistance())
+				}
 			} else if (x <= 0) {
 				x = 0
 				item.setCords(x, y)
+				if (i != 0) {
+					const rotates = [0, 1, 2]
+					const rd = rotates[Math.round(Math.random() * 2)]
+					item.rotate(rd)
+					item.setTarget(item.randomDistance())
+				}
 			}
 		})
 	}
@@ -125,23 +148,50 @@ class Game {
 			})
 		})
 
-		tanks.slice(1).forEach((tank, i, tanks) => {
-			tank.bullets.forEach((bullet, j, bullets) => {
-				const tankC = this.tanks[0].getCenter()
-				const bulletC = bullet.getCenter()
+		tanks.slice(1).forEach((atacker, i) => {
+			tanks.forEach((target, j) => {
+				atacker.bullets.forEach((bullet, j, bullets) => {
+					const tC = target.getCenter()
+					const bC = bullet.getCenter()
 
-				const dX = tankC[0] - bulletC[0]
-				const dY = tankC[1] - bulletC[1]
+					const dX = tC[0] - bC[0]
+					const dY = tC[1] - bC[1]
 
-				if (
-					Math.abs(dX) <= tankSize / 2 + bullet.size / 2 &&
-					Math.abs(dY) <= tankSize / 2 + bullet.size / 2
-				) {
-					bullets.splice(j, 1)
-					this.tanks[0].getDamage(bullet.damage)
-				}
+					if (
+						Math.abs(dX) <= tankSize / 2 + bullet.size / 2 &&
+						Math.abs(dY) <= tankSize / 2 + bullet.size / 2 &&
+						atacker.id != target.id
+					) {
+						bullets.splice(j, 1)
+						target.getDamage(bullet.damage)
+					}
+				})
 			})
 		})
+
+		const allBullets = tanks.map(i => i.bullets)
+		allBullets.forEach((bullets1, i) => {
+			bullets1.forEach((b1, j) => {
+				allBullets.forEach((bullets2, z) => {
+					bullets2.forEach((b2, v) => {
+						if (b1.id !== b2.id) {
+							const b1C = b1.getCenter()
+							const b2C = b2.getCenter()
+							const dX = b1C[0] - b2C[0]
+							const dY = b1C[1] - b2C[1]
+							if (
+								Math.abs(dX) <= b1.size &&
+								Math.abs(dY) <= b1.size
+							) {
+								bullets1.splice(i, 1)
+								bullets2.splice(v, 1)
+							}
+						}
+					})
+				})
+			})
+		})
+
 		if (this.tanks[0].hp <= 0) {
 			alert('you died')
 			location.reload()
@@ -168,28 +218,34 @@ class Game {
 			const eX = eCords[0]
 			const eY = eCords[1]
 
-			eTank.move(eTank.direction)
-			eTank.setTarget(userX, userY)
+			const goToKill = eTank.findTankOnDirection(userTank)
+			if (goToKill) {
+				eTank.rotate(eTank.direction)
+				eTank.setTarget(goToKill[1])
+			}
+			if (eTank.isCompleteTarget() == true) {
+					eTank.rotate(eTank.randomRotate())
+					eTank.setTarget(eTank.randomDistance())
+			} else if (eTank.isCompleteTarget() === 'no target') {
+				eTank.rotate(eTank.randomRotate())
+				eTank.setTarget(eTank.randomDistance())
+			} else {
+				eTank.move(eTank.direction)
+			}
+
 			const friends = [...eTanks]
 			friends.splice(i, 1)
-			const dir = eTank.findFriendOnDirection(friends)
-			if (
-				this.timer - eTank.lastFireTime > eTank.fireDelay &&
-				eTank.findTankOnDirection(userTank)
-			) {
-				if (eTank.direction == 0 && dir != 0 && dir === undefined) {
-					eTank.lastFireTime = this.timer
-					eTank.fire()
-				} else if (eTank.direction == 2 && dir != 2 && dir === undefined) {
-					eTank.lastFireTime = this.timer
-					eTank.fire()
-				} else if (eTank.direction == 1 && dir != 1 && dir === undefined) {
-					eTank.lastFireTime = this.timer
-					eTank.fire()
-				} else if (eTank.direction == 3 && dir != 3 && dir === undefined) {
+			if (eTank.findFriendOnDirection(friends) === undefined) {
+				if (
+					this.timer - eTank.lastFireTime > eTank.fireDelay &&
+					eTank.findTankOnDirection(userTank)
+				) {
 					eTank.lastFireTime = this.timer
 					eTank.fire()
 				}
+			} else {
+				eTank.rotate(eTank.randomRotate())
+				eTank.setTarget(eTank.randomDistance())
 			}
 		})
 	}

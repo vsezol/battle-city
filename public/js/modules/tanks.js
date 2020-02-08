@@ -1,4 +1,5 @@
 import Bullet from './bullet'
+import uid from 'uid'
 
 class Tank {
 	constructor(size, bulletSize, id, direction = 0) {
@@ -45,7 +46,8 @@ class Tank {
 					this.y - 10,
 					this.bulletSpeed,
 					this.bulletDamage,
-					this.bulletSize
+					this.bulletSize,
+					uid(10)
 				)
 			)
 		} else if (this.direction == 2) {
@@ -58,7 +60,8 @@ class Tank {
 					this.y + this.size - 10,
 					this.bulletSpeed,
 					this.bulletDamage,
-					this.bulletSize
+					this.bulletSize,
+					uid(10)
 				)
 			)
 		} else if (this.direction == 1) {
@@ -71,7 +74,8 @@ class Tank {
 						parseInt(this.bulletSize / 2),
 					this.bulletSpeed,
 					this.bulletDamage,
-					this.bulletSize
+					this.bulletSize,
+					uid(10)
 				)
 			)
 		} else if (this.direction == 3) {
@@ -84,7 +88,8 @@ class Tank {
 						parseInt(this.bulletSize / 2),
 					this.bulletSpeed,
 					this.bulletDamage,
-					this.bulletSize
+					this.bulletSize,
+					uid(10)
 				)
 			)
 		}
@@ -247,7 +252,7 @@ class EnemyTank extends Tank {
 	}
 
 	findFriendOnDirection(tanks) {
-		for(let i = 0; i <= 0; i++) {
+		for (let i = 0; i < tanks.length; i++) {
 			const tank = tanks[i]
 			if (this.direction == 0) {
 				if (
@@ -277,6 +282,8 @@ class EnemyTank extends Tank {
 				) {
 					return 3
 				}
+			} else {
+				return -1
 			}
 		}
 	}
@@ -287,59 +294,74 @@ class EnemyTank extends Tank {
 				Math.abs(this.x - uTank.x) <= this.size &&
 				this.y - uTank.y >= 0
 			) {
-				return true
+				return [true, uTank.y]
 			}
 		} else if (this.direction == 2) {
 			if (
 				Math.abs(this.x - uTank.x) <= this.size &&
 				this.y - uTank.y <= 0
 			) {
-				return true
+				return [true, uTank.y]
 			}
 		} else if (this.direction == 1) {
 			if (
 				Math.abs(this.y - uTank.y) <= this.size &&
 				this.x - uTank.x <= 0
 			) {
-				return true
+				return [true, uTank.x]
 			}
 		} else if (this.direction == 3) {
 			if (
 				Math.abs(this.y - uTank.y) <= this.size &&
 				this.x - uTank.x >= 0
 			) {
-				return true
+				return [true, uTank.x]
 			}
+		} else {
+			return [false, false]
+		}
+	}
+
+	randomDistance(min = this.size*2, max = this.size*3) {
+		return Math.round(Math.random() * (max - min) + min)
+	}
+
+	randomRotate(min = 0, max = 3) {
+		return Math.round(Math.random() * (max - min) + min)
+	}
+
+	setTarget(distance) {
+		if (this.direction == 0) {
+			this.toX = this.x
+			this.toY = this.y - distance
+		} else if (this.direction == 2) {
+			this.toX = this.x
+			this.toY = this.y + distance
+		} else if (this.direction == 1) {
+			this.toX = this.x + distance
+			this.toY = this.y
+		} else if (this.direction == 3) {
+			this.toX = this.x - distance
+			this.toY = this.y
+		}
+	}
+
+	isCompleteTarget() {
+		if (this.toX === undefined && this.toY === undefined) {
+			return 'no target'
+		}
+		if (this.direction == 0) {
+			if (this.toY - this.y > 0) return true
+		} else if (this.direction == 2) {
+			if (this.toY - this.y < 0) return true
+		} else if (this.direction == 1) {
+			if (this.toX - this.x < 0) return true
+		} else if (this.direction == 3) {
+			if (this.toX - this.x > 0) return true
 		} else {
 			return false
 		}
 	}
-
-	setTarget(tX, tY) {
-		const cords = this.getCenter()
-		const cX = cords[0]
-		const cY = cords[1]
-
-		const dX = cX - tX
-		const dY = cY - tY
-
-		if (dX > 0 && dY < 0) {
-			// левый нижний
-			const rand = Math.random()
-			this.rotate(3)
-		} else if (dX < 0 && dY < 0) {
-			// правый нижний
-			this.rotate(2)
-		} else if (dX > 0 && dY > 0) {
-			this.rotate(0)
-			// левый верхний
-		} else if (dX < 0 && dY > 0) {
-			this.rotate(1)
-			// правый верхний
-		}
-	}
-
-	goToTarget() {}
 }
 
 export { PlayerTank, EnemyTank }

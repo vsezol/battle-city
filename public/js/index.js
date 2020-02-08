@@ -27,6 +27,7 @@ const blocksSprites = new SpriteSheet(bulletSRC, 17, 17, bulletSize)
 
 const playerTank = new PlayerTank(tankSize, bulletSize, 'player')
 
+//enemy
 const enemyTank1 = new EnemyTank(tankSize, bulletSize, 'enemy 1')
 enemyTank1.setCords(0,0)
 enemyTank1.rotate(1)
