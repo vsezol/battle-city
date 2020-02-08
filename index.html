@@ -5,11 +5,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Battle City</title>
-	<link rel="stylesheet" href="./public/css/main.css">
+	<link rel="stylesheet" href="/public/css/main.css">
 </head>
 <body>
 	<div class="game-wrapper">
 		<canvas id="game-display"></canvas>
+		<div class="win-block">
+			<h1 class="win-h1">YOU WIN!</h1>
+			<button class="restart-win-button restart">NEW GAME</button>
+		</div>
+		<div class="lose-block">
+			<h1 class="lose-h1">GAME OVER!</h1>
+			<button class="restart-lose-button restart">NEW GAME</button>
+		</div>
 	</div>
 	<script src="/bundle.js"></script>
 </body>

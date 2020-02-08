@@ -192,16 +192,15 @@ class Game {
 			})
 		})
 
-		if (this.tanks[0].hp <= 0) {
-			alert('you died')
-			location.reload()
-		}
+		if (this.tanks[0].hp <= 0) return false
 		this.tanks = this.tanks.filter(tank => tank.hp > 0)
+		if (this.tanks.length == 1 && this.tanks[0].hp > 0) return true
 	}
 
 	checkCollisions() {
 		this.checkTanksCollisions()
-		this.checkBulletsCollisions()
+		const gameState = this.checkBulletsCollisions()
+		return gameState
 	}
 
 	enemyBrain() {

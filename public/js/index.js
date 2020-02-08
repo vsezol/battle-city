@@ -17,6 +17,14 @@ const updateTime = parseInt(1000/gameFPS)
 const canvas = document.querySelector('#game-display')
 const context = canvas.getContext('2d')
 
+const winBlock = document.querySelector('.win-block')
+const loseBlock = document.querySelector('.lose-block')
+
+const restartButtons = document.querySelectorAll('.restart')
+restartButtons.forEach( (item) => {
+	item.addEventListener('click', e => location.reload())
+})
+
 canvas.width = gameW
 canvas.height = gameH
 canvas.style.background = gameBg
@@ -29,28 +37,54 @@ const playerTank = new PlayerTank(tankSize, bulletSize, 'player')
 
 //enemy
 const enemyTank1 = new EnemyTank(tankSize, bulletSize, 'enemy 1')
-enemyTank1.setCords(0,0)
+enemyTank1.setCords(150,150)
 enemyTank1.rotate(1)
 const enemyTank2 = new EnemyTank(tankSize, bulletSize, 'enemy 2')
-enemyTank2.setCords(50,50)
+enemyTank2.setCords(600,600)
 enemyTank2.rotate(2)
 const enemyTank3 = new EnemyTank(tankSize, bulletSize, 'enemy 3')
 enemyTank3.setCords(1000,270)
 enemyTank3.rotate(3)
+const enemyTank4 = new EnemyTank(tankSize, bulletSize, 'enemy 3')
+enemyTank4.setCords(600,270)
+enemyTank4.rotate(0)
 
-let game = new Game(gameW, gameH, gameBg, [playerTank, enemyTank1, enemyTank2, enemyTank3], [], [])
+//new game
+let game = new Game(gameW, gameH, gameBg, [playerTank, enemyTank1, enemyTank2, enemyTank3, enemyTank4], [], [])
 
+
+let gameReloadID = undefined
 async function loadGame() {
 	await tanksSprites.onLoad()
 	await bulletsSprites.onLoad()
 	await blocksSprites.onLoad()
-	setInterval(update, updateTime)
+	gameReloadID = setInterval(update, updateTime)
 }
 loadGame()
+
+function winGame(cvs, winBlock) {
+	clearInterval(gameReloadID)
+	cvs.style.display = 'none'
+	winBlock.style.display = 'block'
+}
+
+function loseGame(cvs, loseBlock) {
+	clearInterval(gameReloadID)
+	cvs.style.display = 'none'
+	loseBlock.style.display = 'block'
+}
+
 function update() {
 	game.clearAll(context)
 	game.drawAll(context, tanksSprites, bulletsSprites)
-	game.checkCollisions()
+	const gameState = game.checkCollisions()
 	game.watchKeyBoard()
 	game.enemyBrain()
+	
+	if (gameState == true) {
+		winGame(canvas, winBlock)
+	} else if (gameState == false) {
+		loseGame(canvas, loseBlock)
+
+	}
 }

@@ -236,7 +236,7 @@ class PlayerTank extends Tank {
 	constructor(size, bulletSize, id) {
 		super(size, bulletSize, id)
 		this.type = 0
-		this.speed = 10
+		this.speed = 4
 		this.bulletSpeed = 4
 		this.fireDelay = 60
 	}

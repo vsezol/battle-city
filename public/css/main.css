@@ -20,4 +20,72 @@
       -ms-flex-align: center;
           align-items: center;
 }
+
+body {
+  background: black;
+}
+
+.win-h1 {
+  color: green;
+  font-size: 5rem;
+}
+
+.win-block {
+  background: black;
+  display: none;
+}
+
+.lose-h1 {
+  color: red;
+  font-size: 5rem;
+}
+
+.lose-block {
+  background: black;
+  display: none;
+}
+
+.restart-lose-button {
+  width: 100%;
+  padding: 1rem;
+  background: black;
+  color: red;
+  border: red 2px solid;
+  border-radius: 2rem;
+  font-size: 3.5rem;
+  -webkit-box-shadow: 0 0 20px red;
+          box-shadow: 0 0 20px red;
+  -webkit-transition: all 1s;
+  transition: all 1s;
+  font-weigth: bold;
+}
+
+.restart-lose-button:hover {
+  color: white;
+  background: red;
+  -webkit-box-shadow: 0 0 20px white;
+          box-shadow: 0 0 20px white;
+}
+
+.restart-win-button {
+  width: 100%;
+  padding: 1rem;
+  background: black;
+  color: green;
+  border: green 2px solid;
+  border-radius: 2rem;
+  font-size: 3.5rem;
+  -webkit-box-shadow: 0 0 20px green;
+          box-shadow: 0 0 20px green;
+  -webkit-transition: all 1s;
+  transition: all 1s;
+  font-weigth: bold;
+}
+
+.restart-win-button:hover {
+  color: white;
+  background: green;
+  -webkit-box-shadow: 0 0 20px white;
+          box-shadow: 0 0 20px white;
+}
 /*# sourceMappingURL=main.css.map */
