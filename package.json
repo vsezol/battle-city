@@ -20,6 +20,8 @@
 		"webpack-dev-server": "^3.10.2"
 	},
 	"dependencies": {
+		"buzz": "^1.2.1",
+		"howler": "^2.1.3",
 		"uid": "0.0.2"
 	}
 }

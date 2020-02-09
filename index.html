@@ -1,24 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Battle City</title>
-	<link rel="stylesheet" href="/public/css/main.css">
+	<link rel="stylesheet" href="./public/css/main.css">
 </head>
+
 <body>
-	<div class="game-wrapper">
+	<section class="game-wrapper">
+		<div id="menu">
+			<div>
+				<div class="mes-ba">
+					<img src="./public/img/messages/battle_city.png" alt="">
+				</div>
+				<button class="restart-win-button restart">
+					<span style="background-color: rgba(0, 0, 0, 0.8);">NEW GAME</span>
+				</button>
+			</div>
+		</div>
+		<div class="score-desk">
+			<div id="score-block">SCORE</div>
+			<div id="title-block"><img id="title-img" src="./public/img/title/title.png" alt=""></div>
+			<div id="menu-block"><a id="to-menu" href="#">MENU</a></div>
+		</div>
 		<canvas id="game-display"></canvas>
 		<div class="win-block">
-			<h1 class="win-h1">YOU WIN!</h1>
-			<button class="restart-win-button restart">NEW GAME</button>
+			<div>
+				<div class="mes-go">
+					<img src="./public/img/messages/game_win.png" alt="">
+				</div>
+				<button class="restart-win-button restart"><span style="background-color: rgba(0, 0, 0, 0.8);">NEW
+						GAME</span></button>
+			</div>
 		</div>
 		<div class="lose-block">
-			<h1 class="lose-h1">GAME OVER!</h1>
-			<button class="restart-lose-button restart">NEW GAME</button>
+			<div>
+				<div class="mes-go">
+					<img src="./public/img/messages/game_over.png" alt="">
+				</div>
+				<button class="restart-lose-button restart"><span style="background-color: rgba(0, 0, 0, 0.8);">NEW
+						GAME</span></button>
+			</div>
 		</div>
-	</div>
+	</section>
 	<script src="/bundle.js"></script>
 </body>
+
 </html>

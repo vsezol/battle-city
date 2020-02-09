@@ -10,11 +10,12 @@ class Tank {
 		this.lastX = this.x
 		this.lastY = this.y
 		this.lastFireTime = 0
+		this.lastRotateTime = 0
 		this.bulletSize = bulletSize
 		this.bulletDamage = 1
 		this.size = size
 		this.bullets = []
-		this.hp = 2
+		this.hp = 1
 		this.id = id
 		this.banDirection = [[], [], [], []]
 	}
@@ -118,8 +119,11 @@ class Tank {
 		})
 	}
 
-	rotate(direction) {
-		this.direction = direction
+	rotate(direction, timer) {
+		if (timer - this.lastRotateTime > this.rotateDelay) {
+			this.lastRotateTime = timer
+			this.direction = direction
+		}
 	}
 
 	checkDirection(otherTanks) {
@@ -239,6 +243,7 @@ class PlayerTank extends Tank {
 		this.speed = 4
 		this.bulletSpeed = 4
 		this.fireDelay = 60
+		this.rotateDelay = 0
 	}
 }
 
@@ -248,7 +253,8 @@ class EnemyTank extends Tank {
 		this.type = 3
 		this.speed = 2
 		this.bulletSpeed = 4
-		this.fireDelay = 120
+		this.fireDelay = 100
+		this.rotateDelay = 15
 	}
 
 	findFriendOnDirection(tanks) {

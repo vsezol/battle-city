@@ -7,6 +7,7 @@ class Game {
 		this.bullets = bullets
 		this.blocks = blocks
 		this.timer = 0
+		this.maxScore = tanks.length - 1
 	}
 
 	limitArea() {
@@ -21,7 +22,7 @@ class Game {
 				if (i != 0) {
 					const rotates = [0, 1, 3]
 					const rd = rotates[Math.round(Math.random() * 2)]
-					item.rotate(rd)
+					item.rotate(rd, this.timer)
 					item.setTarget(item.randomDistance())
 				}
 			} else if (y <= 0) {
@@ -30,7 +31,7 @@ class Game {
 				if (i != 0) {
 					const rotates = [2, 1, 3]
 					const rd = rotates[Math.round(Math.random() * 2)]
-					item.rotate(rd)
+					item.rotate(rd, this.timer)
 					item.setTarget(item.randomDistance())
 				}
 			}
@@ -40,7 +41,7 @@ class Game {
 				if (i != 0) {
 					const rotates = [0, 2, 3]
 					const rd = rotates[Math.round(Math.random() * 2)]
-					item.rotate(rd)
+					item.rotate(rd, this.timer)
 					item.setTarget(item.randomDistance())
 				}
 			} else if (x <= 0) {
@@ -49,7 +50,7 @@ class Game {
 				if (i != 0) {
 					const rotates = [0, 1, 2]
 					const rd = rotates[Math.round(Math.random() * 2)]
-					item.rotate(rd)
+					item.rotate(rd, this.timer)
 					item.setTarget(item.randomDistance())
 				}
 			}
@@ -86,16 +87,16 @@ class Game {
 	watchKeyBoard() {
 		onkeydown = e => {
 			if (e.key === 'ArrowUp') {
-				this.userRotate(0)
+				this.userRotate(0, this.timer)
 				this.userMove(0)
 			} else if (e.key === 'ArrowDown') {
-				this.userRotate(2)
+				this.userRotate(2, this.timer)
 				this.userMove(2)
 			} else if (e.key === 'ArrowRight') {
-				this.userRotate(1)
+				this.userRotate(1, this.timer)
 				this.userMove(1)
 			} else if (e.key === 'ArrowLeft') {
-				this.userRotate(3)
+				this.userRotate(3, this.timer)
 				this.userMove(3)
 			} else if (e.key === ' ') {
 				if (
@@ -109,8 +110,8 @@ class Game {
 		}
 	}
 
-	userRotate(direction) {
-		this.tanks[0].rotate(direction)
+	userRotate(direction, timer) {
+		this.tanks[0].rotate(direction, this.timer)
 	}
 
 	userMove(direction) {
@@ -219,14 +220,14 @@ class Game {
 
 			const goToKill = eTank.findTankOnDirection(userTank)
 			if (goToKill) {
-				eTank.rotate(eTank.direction)
+				eTank.rotate(eTank.direction, this.timer)
 				eTank.setTarget(goToKill[1])
 			}
 			if (eTank.isCompleteTarget() == true) {
-					eTank.rotate(eTank.randomRotate())
+					eTank.rotate(eTank.randomRotate(), this.timer)
 					eTank.setTarget(eTank.randomDistance())
 			} else if (eTank.isCompleteTarget() === 'no target') {
-				eTank.rotate(eTank.randomRotate())
+				eTank.rotate(eTank.randomRotate(), this.timer)
 				eTank.setTarget(eTank.randomDistance())
 			} else {
 				eTank.move(eTank.direction)
@@ -243,10 +244,14 @@ class Game {
 					eTank.fire()
 				}
 			} else {
-				eTank.rotate(eTank.randomRotate())
+				eTank.rotate(eTank.randomRotate(), this.timer)
 				eTank.setTarget(eTank.randomDistance())
 			}
 		})
+	}
+
+	getScore() {
+		return this.maxScore - (this.tanks.length - 1)
 	}
 }
 

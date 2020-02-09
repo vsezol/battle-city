@@ -1,6 +1,6 @@
 import SpriteSheet from './modules/sprite-sheet'
 import Bullet from './modules/bullet'
-import {PlayerTank, EnemyTank} from './modules/tanks'
+import { PlayerTank, EnemyTank } from './modules/tanks'
 import Game from './modules/game'
 import Block from './modules/block'
 
@@ -8,20 +8,21 @@ const tanksSRC = './public/img/tanks/ts.png'
 const bulletSRC = './public/img/tanks/normal_bullet.png'
 const gameBg = 'black'
 const gameW = window.innerWidth
-const gameH = window.innerHeight
+const gameH = window.innerHeight * 0.95
 const gameFPS = 60
 const tankSize = 75
 const bulletSize = 17
-const updateTime = parseInt(1000/gameFPS)
+const updateTime = parseInt(1000 / gameFPS)
 
 const canvas = document.querySelector('#game-display')
 const context = canvas.getContext('2d')
 
 const winBlock = document.querySelector('.win-block')
 const loseBlock = document.querySelector('.lose-block')
+const scoreBlock = document.querySelector('#score-block')
 
 const restartButtons = document.querySelectorAll('.restart')
-restartButtons.forEach( (item) => {
+restartButtons.forEach(item => {
 	item.addEventListener('click', e => location.reload())
 })
 
@@ -37,21 +38,32 @@ const playerTank = new PlayerTank(tankSize, bulletSize, 'player')
 
 //enemy
 const enemyTank1 = new EnemyTank(tankSize, bulletSize, 'enemy 1')
-enemyTank1.setCords(150,150)
+enemyTank1.setCords(150, 150)
 enemyTank1.rotate(1)
 const enemyTank2 = new EnemyTank(tankSize, bulletSize, 'enemy 2')
-enemyTank2.setCords(600,600)
+enemyTank2.setCords(600, 600)
 enemyTank2.rotate(2)
 const enemyTank3 = new EnemyTank(tankSize, bulletSize, 'enemy 3')
-enemyTank3.setCords(1000,270)
+enemyTank3.setCords(1000, 270)
 enemyTank3.rotate(3)
 const enemyTank4 = new EnemyTank(tankSize, bulletSize, 'enemy 3')
-enemyTank4.setCords(600,270)
+enemyTank4.setCords(600, 270)
 enemyTank4.rotate(0)
 
 //new game
-let game = new Game(gameW, gameH, gameBg, [playerTank, enemyTank1, enemyTank2, enemyTank3, enemyTank4], [], [])
+let game = new Game(
+	gameW,
+	gameH,
+	gameBg,
+	[playerTank, enemyTank1, enemyTank2, enemyTank3, enemyTank4],
+	[],
+	[]
+)
 
+const driveSound = new Audio('./public/sounds/drive_sound.mp3')
+
+// const driveSound = new Buzz.sound("./public/sounds/drive_sound", {formats: [ "mp3", "aac" ], preload: true})
+// const beginSound = new Buzz.sound("./public/sounds/begin", {formats: [ "mp3", "aac" ], preload: true})
 
 let gameReloadID = undefined
 async function loadGame() {
@@ -60,31 +72,35 @@ async function loadGame() {
 	await blocksSprites.onLoad()
 	gameReloadID = setInterval(update, updateTime)
 }
-loadGame()
+
+window.onload = () => {
+	loadGame()
+}
 
 function winGame(cvs, winBlock) {
 	clearInterval(gameReloadID)
 	cvs.style.display = 'none'
-	winBlock.style.display = 'block'
+	winBlock.style.display = 'flex'
 }
 
 function loseGame(cvs, loseBlock) {
 	clearInterval(gameReloadID)
 	cvs.style.display = 'none'
-	loseBlock.style.display = 'block'
+	loseBlock.style.display = 'flex'
 }
 
-function update() {
+async function update() {
 	game.clearAll(context)
 	game.drawAll(context, tanksSprites, bulletsSprites)
 	const gameState = game.checkCollisions()
 	game.watchKeyBoard()
 	game.enemyBrain()
-	
+
+	const score = game.getScore()
+	scoreBlock.innerHTML = `SCORE <span style="color: red;">${score}</span>`
 	if (gameState == true) {
 		winGame(canvas, winBlock)
 	} else if (gameState == false) {
 		loseGame(canvas, loseBlock)
-
 	}
 }
