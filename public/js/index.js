@@ -1,8 +1,6 @@
 import SpriteSheet from './modules/sprite-sheet'
-import Bullet from './modules/bullet'
 import { PlayerTank, EnemyTank } from './modules/tanks'
 import Game from './modules/game'
-import Block from './modules/block'
 
 const tanksSRC = './public/img/tanks/ts.png'
 const bulletSRC = './public/img/tanks/normal_bullet.png'
@@ -14,29 +12,69 @@ const tankSize = 75
 const bulletSize = 17
 const updateTime = parseInt(1000 / gameFPS)
 
+//canvas
 const canvas = document.querySelector('#game-display')
 const context = canvas.getContext('2d')
+canvas.width = gameW
+canvas.height = gameH
+canvas.style.display = 'none'
+canvas.style.background = gameBg
 
+//game blocks
+const menuBlock = document.querySelector('#menu')
+const menuLink = document.querySelector('#menu-block')
+const scoreDesk = document.querySelector('.score-desk')
+const scoreBlock = document.querySelector('#score-block')
 const winBlock = document.querySelector('.win-block')
 const loseBlock = document.querySelector('.lose-block')
-const scoreBlock = document.querySelector('#score-block')
 
+//buttons
+const newGameButton = document.querySelector('.new-game-btn')
+newGameButton.addEventListener('click', async e => {
+	menuBlock.style.display = 'none'
+	scoreDesk.style.display = 'flex'
+	await new Promise((res) => {
+		beginSound.play()
+		beginSound.addEventListener('ended', () => {
+			loadGame()
+		})
+	})
+})
 const restartButtons = document.querySelectorAll('.restart')
 restartButtons.forEach(item => {
 	item.addEventListener('click', e => location.reload())
 })
+menuLink.addEventListener('click', e => {
+	scoreDesk.style.display = 'none'
+	menuBlock.style.display = 'flex'
+	canvas.style.display = 'none'
+	clearInterval(gameReloadID)
+})
 
-canvas.width = gameW
-canvas.height = gameH
-canvas.style.background = gameBg
-
+//sounds
+const beginSound = new Audio('./public/sounds/begin.mp3')
+const beginSoundLoading = new Promise((res) => {
+	beginSound.addEventListener('loadeddata', () => res())
+})
+const motorSound = new Audio('./public/sounds/motor_sound.mp3')
+const motorSoundLoading = new Promise((res) => {
+	motorSound.addEventListener('loadeddata', () => res())
+})
+const playSoundLoop = sound => {
+	sound.play()
+	sound.addEventListener('ended', () => {
+			sound.play()
+	})
+}
+//sprites
 const tanksSprites = new SpriteSheet(tanksSRC, 450, 300, tankSize)
 const bulletsSprites = new SpriteSheet(bulletSRC, 17, 17, bulletSize)
 const blocksSprites = new SpriteSheet(bulletSRC, 17, 17, bulletSize)
 
+//player tank
 const playerTank = new PlayerTank(tankSize, bulletSize, 'player')
 
-//enemy
+//enemy tanks
 const enemyTank1 = new EnemyTank(tankSize, bulletSize, 'enemy 1')
 enemyTank1.setCords(150, 150)
 enemyTank1.rotate(1)
@@ -60,33 +98,22 @@ let game = new Game(
 	[]
 )
 
-const driveSound = new Audio('./public/sounds/drive_sound.mp3')
-
-// const driveSound = new Buzz.sound("./public/sounds/drive_sound", {formats: [ "mp3", "aac" ], preload: true})
-// const beginSound = new Buzz.sound("./public/sounds/begin", {formats: [ "mp3", "aac" ], preload: true})
-
-let gameReloadID = undefined
-async function loadGame() {
+const preload = async () => {
 	await tanksSprites.onLoad()
 	await bulletsSprites.onLoad()
 	await blocksSprites.onLoad()
+	await beginSoundLoading
+	await motorSoundLoading
+	menuBlock.style.display = 'flex'
+}
+preload()
+
+//game
+let gameReloadID = undefined
+async function loadGame() {
+	canvas.style.display = 'block'
 	gameReloadID = setInterval(update, updateTime)
-}
-
-window.onload = () => {
-	loadGame()
-}
-
-function winGame(cvs, winBlock) {
-	clearInterval(gameReloadID)
-	cvs.style.display = 'none'
-	winBlock.style.display = 'flex'
-}
-
-function loseGame(cvs, loseBlock) {
-	clearInterval(gameReloadID)
-	cvs.style.display = 'none'
-	loseBlock.style.display = 'flex'
+	playSoundLoop(motorSound)
 }
 
 async function update() {
@@ -103,4 +130,18 @@ async function update() {
 	} else if (gameState == false) {
 		loseGame(canvas, loseBlock)
 	}
+}
+
+function winGame(cvs, winBlock) {
+	clearInterval(gameReloadID)
+	motorSound.pause()
+	cvs.style.display = 'none'
+	winBlock.style.display = 'flex'
+}
+
+function loseGame(cvs, loseBlock) {
+	driveSound.pause()
+	clearInterval(gameReloadID)
+	cvs.style.display = 'none'
+	loseBlock.style.display = 'flex'
 }

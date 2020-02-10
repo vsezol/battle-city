@@ -25,6 +25,21 @@ body {
           align-items: center;
 }
 
+.game-wrapper #menu {
+  height: 100vh;
+  display: none;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column nowrap;
+          flex-flow: column nowrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
 .game-wrapper #menu .mes-ba {
   width: 40vw;
 }
@@ -33,7 +48,28 @@ body {
   width: 100%;
 }
 
+.game-wrapper #menu .new-game-btn {
+  width: 100%;
+  padding: 1rem;
+  background: url("../img/messages/text.png");
+  color: yellow;
+  border: yellow 2px solid;
+  border-radius: 2rem;
+  font-size: 3.5rem;
+  -webkit-box-shadow: 0 0 10px yellow;
+          box-shadow: 0 0 10px yellow;
+  -webkit-transition: all 1s;
+  transition: all 1s;
+  font-weight: 800;
+}
+
+.game-wrapper #menu .new-game-btn:hover {
+  -webkit-box-shadow: 0 0 40px yellow;
+          box-shadow: 0 0 40px yellow;
+}
+
 .game-wrapper .score-desk {
+  display: none;
   color: black;
   font-weight: bold;
   font-family: arial;
@@ -41,9 +77,6 @@ body {
   width: 100%;
   font-size: 5vh;
   background: #C8891F;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
       -ms-flex-flow: row nowrap;
@@ -99,7 +132,7 @@ body {
           box-shadow: 0 0 10px red;
   -webkit-transition: all 1s;
   transition: all 1s;
-  font-weigth: bold;
+  font-weight: 800;
 }
 
 .game-wrapper .lose-block .restart-lose-button:hover {
@@ -149,7 +182,7 @@ body {
           box-shadow: 0 0 20px green;
   -webkit-transition: all 1s;
   transition: all 1s;
-  font-weigth: bold;
+  font-weight: 800;
 }
 
 .game-wrapper .win-block .restart-win-button:hover {

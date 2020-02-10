@@ -14,11 +14,31 @@ body
 	align-items: center
 
 	#menu
+		height: 100vh
+		display: none
+		flex-flow: column nowrap
+		justify-content: center
+		align-items: center
 		.mes-ba
 			width: 40vw
 			img
 				width: 100%
+		.new-game-btn
+			width: 100%
+			padding: 1rem
+			background: url('../img/messages/text.png')
+			color: yellow
+			border: yellow 2px solid
+			border-radius: 2rem
+			font-size: 3.5rem
+			box-shadow: 0 0 10px yellow
+			transition: all 1s
+			font-weight: 800
+			&:hover
+				box-shadow: 0 0 40px yellow
+
 	.score-desk
+		display: none
 		color: black
 		font-weight: bold
 		font-family: arial
@@ -26,7 +46,6 @@ body
 		width: 100%
 		font-size: 5vh
 		background: #C8891F
-		display: flex
 		flex-flow: row nowrap
 		justify-content: space-around
 		#title-block
@@ -61,7 +80,7 @@ body
 			font-size: 3.5rem
 			box-shadow: 0 0 10px red
 			transition: all 1s
-			font-weigth: bold
+			font-weight: 800
 
 
 			&:hover
@@ -94,7 +113,7 @@ body
 			font-size: 3.5rem
 			box-shadow: 0 0 20px green
 			transition: all 1s
-			font-weigth: bold
+			font-weight: 800
 
 			&:hover
 				box-shadow: 0 0 40px green
