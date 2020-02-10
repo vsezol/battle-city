@@ -224,8 +224,8 @@ class Game {
 				eTank.setTarget(goToKill[1])
 			}
 			if (eTank.isCompleteTarget() == true) {
-					eTank.rotate(eTank.randomRotate(), this.timer)
-					eTank.setTarget(eTank.randomDistance())
+				eTank.rotate(eTank.randomRotate(), this.timer)
+				eTank.setTarget(eTank.randomDistance())
 			} else if (eTank.isCompleteTarget() === 'no target') {
 				eTank.rotate(eTank.randomRotate(), this.timer)
 				eTank.setTarget(eTank.randomDistance())

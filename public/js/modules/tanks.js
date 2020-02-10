@@ -243,7 +243,7 @@ class PlayerTank extends Tank {
 		this.speed = 4
 		this.bulletSpeed = 4
 		this.fireDelay = 60
-		this.rotateDelay = 0
+		this.rotateDelay = -10
 	}
 }
 
