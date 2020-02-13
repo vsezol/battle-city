@@ -71,7 +71,11 @@ class Game {
 		})
 
 		this.blocks.forEach(block => {
-			blocksSprites.drawSprite(context, [block.type, 0], [block.x, block.y])
+			blocksSprites.drawSprite(
+				context,
+				[block.type, 0],
+				[block.x, block.y]
+			)
 		})
 
 		this.tanks.forEach(tank => {
@@ -129,7 +133,11 @@ class Game {
 	checkTanksCollisions() {
 		const tanks = this.tanks
 		tanks.forEach((tank, i, tanks) => {
-			tank.checkDirection([...tanks.slice(0, i), ...tanks.slice(i + 1), ...this.blocks])
+			tank.checkDirection([
+				...tanks.slice(0, i),
+				...tanks.slice(i + 1),
+				...this.blocks
+			])
 		})
 	}
 
@@ -266,6 +274,15 @@ class Game {
 
 	getScore() {
 		return this.maxScore - (this.tanks.length - 1)
+	}
+
+	transformUser() {
+		const score = this.getScore()
+		if (score >= 1 && score < 2) {
+			this.tanks[0].transformToNewType(1)
+		} else if(score >= 2) {
+			this.tanks[0].transformToNewType(2)
+		}
 	}
 }
 

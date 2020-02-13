@@ -36,6 +36,26 @@ class Tank {
 		return this.bullets
 	}
 
+	transformToNewType(type) {
+		this.type = type
+		if (type == 0) {
+			this.hp = 1
+			this.damage = 1
+			this.speed = 4
+		} else if (type == 1) {
+			this.hp = 2
+			this.damage = 1
+			this.speed = 8
+			this.bulletSpeed = 10
+		} else if (type == 2) {
+			this.hp = 5
+			this.damage = 2
+			this.speed = 4
+			this.bulletSpeed = 10
+			this.fireDelay = 30
+		}
+	}
+
 	fire() {
 		if (this.direction == 0) {
 			this.bullets.push(
@@ -328,7 +348,7 @@ class EnemyTank extends Tank {
 		}
 	}
 
-	randomDistance(min = this.size*2, max = this.size*3) {
+	randomDistance(min = this.size * 2, max = this.size * 3) {
 		return Math.round(Math.random() * (max - min) + min)
 	}
 

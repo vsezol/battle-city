@@ -105,6 +105,7 @@ async function update() {
 	const gameState = game.checkCollisions(dieSound)
 	game.watchKeyBoard(fireSound)
 	game.enemyBrain()
+	game.transformUser()
 
 	const score = game.getScore()
 	scoreBlock.innerHTML = `SCORE <span style="color: red;">${score}</span>`
