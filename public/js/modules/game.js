@@ -11,7 +11,7 @@ class Game {
 	}
 
 	limitArea() {
-		this.tanks.forEach((item, i, array) => {
+		this.tanks.forEach((item, i) => {
 			const itemCords = item.getData().slice(2)
 			let x = itemCords[0]
 			let y = itemCords[1]
@@ -57,19 +57,24 @@ class Game {
 		})
 	}
 
-	drawAll(context, tanksSprites, bulletsSprites, blocksSprites = undefined) {
+	drawAll(context, tanksSprites, bulletsSprites, blocksSprites) {
 		this.limitArea()
 
-		this.tanks.forEach((tank, i, tanks) => {
+		this.tanks.forEach(tank => {
 			const tankSpriteCords = tank.getData().slice(0, 2)
 			const tankCords = tank.getData().slice(2)
 			tanksSprites.drawSprite(context, tankSpriteCords, tankCords)
 			tank.limitBullets(this.w, this.h)
-			tank.getBullets().forEach((bullet, j, bullets) => {
+			tank.getBullets().forEach(bullet => {
 				bulletsSprites.drawSprite(context, [0, 0], bullet.getCords())
 			})
 		})
-		this.tanks.forEach((tank, i, tanks) => {
+
+		this.blocks.forEach(block => {
+			blocksSprites.drawSprite(context, [block.type, 0], [block.x, block.y])
+		})
+
+		this.tanks.forEach(tank => {
 			tank.moveBullets()
 		})
 		this.updateTimer()
@@ -84,7 +89,7 @@ class Game {
 		this.timer++
 	}
 
-	watchKeyBoard() {
+	watchKeyBoard(fireSound) {
 		onkeydown = e => {
 			if (e.key === 'ArrowUp') {
 				this.userRotate(0, this.timer)
@@ -103,6 +108,7 @@ class Game {
 					this.timer - this.tanks[0].lastFireTime >
 					this.tanks[0].fireDelay
 				) {
+					fireSound.play()
 					this.tanks[0].lastFireTime = this.timer
 					this.tanks[0].fire()
 				}
@@ -123,17 +129,17 @@ class Game {
 	checkTanksCollisions() {
 		const tanks = this.tanks
 		tanks.forEach((tank, i, tanks) => {
-			tank.checkDirection([...tanks.slice(0, i), ...tanks.slice(i + 1)])
+			tank.checkDirection([...tanks.slice(0, i), ...tanks.slice(i + 1), ...this.blocks])
 		})
 	}
 
-	checkBulletsCollisions() {
+	checkBulletsCollisions(dieSound) {
 		const tanks = this.tanks
 		const userBullets = tanks[0].bullets
 		const tankSize = tanks[0].size
 
 		userBullets.forEach((bullet, i, bullets) => {
-			tanks.slice(1).forEach((tank, j, tanks) => {
+			tanks.slice(1).forEach(tank => {
 				const tankC = tank.getCenter()
 				const bulletC = bullet.getCenter()
 
@@ -145,6 +151,22 @@ class Game {
 				) {
 					bullets.splice(i, 1)
 					tank.getDamage(bullet.damage)
+					dieSound.play()
+				}
+			})
+			this.blocks.forEach(block => {
+				const blockC = block.getCenter()
+				const bulletC = bullet.getCenter()
+
+				const dX = blockC[0] - bulletC[0]
+				const dY = blockC[1] - bulletC[1]
+				if (
+					Math.abs(dX) <= tankSize / 2 + bullet.size / 2 &&
+					Math.abs(dY) <= tankSize / 2 + bullet.size / 2
+				) {
+					bullets.splice(i, 1)
+					block.getDamage(bullet.damage)
+					dieSound.play()
 				}
 			})
 		})
@@ -165,6 +187,7 @@ class Game {
 					) {
 						bullets.splice(j, 1)
 						target.getDamage(bullet.damage)
+						dieSound.play()
 					}
 				})
 			})
@@ -195,29 +218,20 @@ class Game {
 
 		if (this.tanks[0].hp <= 0) return false
 		this.tanks = this.tanks.filter(tank => tank.hp > 0)
+		this.blocks = this.blocks.filter(block => block.hp > 0)
 		if (this.tanks.length == 1 && this.tanks[0].hp > 0) return true
 	}
 
-	checkCollisions() {
+	checkCollisions(dieSound) {
 		this.checkTanksCollisions()
-		const gameState = this.checkBulletsCollisions()
+		const gameState = this.checkBulletsCollisions(dieSound)
 		return gameState
 	}
 
 	enemyBrain() {
 		const userTank = this.tanks[0]
-		const tankSize = this.tanks[0].size
 		const enemyTanks = this.tanks.slice(1)
-		let iter = 0
 		enemyTanks.forEach((eTank, i, eTanks) => {
-			const userCords = userTank.getCenter()
-			const userX = userCords[0]
-			const userY = userCords[1]
-
-			const eCords = eTank.getCenter()
-			const eX = eCords[0]
-			const eY = eCords[1]
-
 			const goToKill = eTank.findTankOnDirection(userTank)
 			if (goToKill) {
 				eTank.rotate(eTank.direction, this.timer)
@@ -233,7 +247,7 @@ class Game {
 				eTank.move(eTank.direction)
 			}
 
-			const friends = [...eTanks]
+			const friends = [...eTanks, ...this.blocks]
 			friends.splice(i, 1)
 			if (eTank.findFriendOnDirection(friends) === undefined) {
 				if (

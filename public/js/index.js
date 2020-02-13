@@ -1,14 +1,18 @@
 import SpriteSheet from './modules/sprite-sheet'
-import { PlayerTank, EnemyTank } from './modules/tanks'
+import tanksArray from './tanks/tanks'
 import Game from './modules/game'
+import {sounds, soundsPromises} from './sounds/sounds'
+import blocks from './blocks/blocks'
 
 const tanksSRC = './public/img/tanks/ts.png'
 const bulletSRC = './public/img/tanks/normal_bullet.png'
+const blocksSRC = './public/img/blocks/bs.png'
 const gameBg = 'black'
 const gameW = window.innerWidth
 const gameH = window.innerHeight * 0.95
 const gameFPS = 60
 const tankSize = 75
+const blockSize = 75
 const bulletSize = 17
 const updateTime = parseInt(1000 / gameFPS)
 
@@ -40,10 +44,12 @@ newGameButton.addEventListener('click', async e => {
 		})
 	})
 })
+
 const restartButtons = document.querySelectorAll('.restart')
 restartButtons.forEach(item => {
 	item.addEventListener('click', e => location.reload())
 })
+
 menuLink.addEventListener('click', e => {
 	scoreDesk.style.display = 'none'
 	menuBlock.style.display = 'flex'
@@ -52,19 +58,13 @@ menuLink.addEventListener('click', e => {
 })
 
 //sounds
-const beginSound = new Audio('./public/sounds/begin.mp3')
-const beginSoundLoading = new Promise(res => {
-	beginSound.addEventListener('loadeddata', () => res())
-})
-const motorSound = new Audio('./public/sounds/motor_sound.mp3')
-const motorSoundLoading = new Promise(res => {
-	motorSound.addEventListener('loadeddata', () => res())
-})
-const driveSound = new Audio('./public/sounds/motor_sound.mp3')
-const driveSoundLoading = new Promise(res => {
-	driveSound.addEventListener('loadeddata', () => res())
-})
-let lastUserAction = 'none'
+const beginSound = sounds[0]
+const motorSound = sounds[1]
+const driveSound = sounds[2]
+const fireSound = sounds[3]
+const dieSound = sounds[4]
+const loseSound = sounds[5]
+const winSound = sounds[6]
 
 const playSoundLoop = sound => {
 	sound.play()
@@ -76,42 +76,17 @@ const playSoundLoop = sound => {
 //sprites
 const tanksSprites = new SpriteSheet(tanksSRC, 450, 300, tankSize)
 const bulletsSprites = new SpriteSheet(bulletSRC, 17, 17, bulletSize)
-const blocksSprites = new SpriteSheet(bulletSRC, 17, 17, bulletSize)
-
-//player tank
-const playerTank = new PlayerTank(tankSize, bulletSize, 'player')
-
-//enemy tanks
-const enemyTank1 = new EnemyTank(tankSize, bulletSize, 'enemy 1')
-enemyTank1.setCords(150, 150)
-enemyTank1.rotate(1)
-const enemyTank2 = new EnemyTank(tankSize, bulletSize, 'enemy 2')
-enemyTank2.setCords(600, 600)
-enemyTank2.rotate(2)
-const enemyTank3 = new EnemyTank(tankSize, bulletSize, 'enemy 3')
-enemyTank3.setCords(1000, 270)
-enemyTank3.rotate(3)
-const enemyTank4 = new EnemyTank(tankSize, bulletSize, 'enemy 3')
-enemyTank4.setCords(600, 270)
-enemyTank4.rotate(0)
+const blocksSprites = new SpriteSheet(blocksSRC, 375, 75, blockSize)
 
 //new game
-let game = new Game(
-	gameW,
-	gameH,
-	gameBg,
-	[playerTank, enemyTank1, enemyTank2, enemyTank3, enemyTank4],
-	[],
-	[]
-)
+let game = new Game(gameW, gameH, gameBg, tanksArray, [], blocks)
 
 const preload = async () => {
 	await tanksSprites.onLoad()
 	await bulletsSprites.onLoad()
 	await blocksSprites.onLoad()
-	await beginSoundLoading
-	await motorSoundLoading
-	await driveSoundLoading
+	await Promise.all(soundsPromises)
+
 	menuBlock.style.display = 'flex'
 }
 preload()
@@ -126,27 +101,10 @@ async function loadGame() {
 
 async function update() {
 	game.clearAll(context)
-	game.drawAll(context, tanksSprites, bulletsSprites)
-	const gameState = game.checkCollisions()
-	const userAction = game.watchKeyBoard()
-	game.watchKeyBoard()
+	game.drawAll(context, tanksSprites, bulletsSprites, blocksSprites)
+	const gameState = game.checkCollisions(dieSound)
+	game.watchKeyBoard(fireSound)
 	game.enemyBrain()
-	// if (userAction === 'drive') {
-	// 	motorSound.pause()
-	// 	playSoundLoop(driveSound)
-	// }
-	// if (userAction === 'none') {
-	// 	driveSound.pause()
-	// } else if (userAction === lastUserAction) {
-	// 	lastUserAction = userAction
-	// 	if (userAction === 'drive') {
-	// 		playSoundLoop(driveSound)
-	// 	} else {
-	// 		driveSound.pause()
-	// 	}
-	// } else {
-	// 	lastUserAction = userAction
-	// }
 
 	const score = game.getScore()
 	scoreBlock.innerHTML = `SCORE <span style="color: red;">${score}</span>`
@@ -161,6 +119,7 @@ function winGame(cvs, winBlock) {
 	clearInterval(gameReloadID)
 	motorSound.pause()
 	driveSound.pause()
+	winSound.play()
 	cvs.style.display = 'none'
 	winBlock.style.display = 'flex'
 }
@@ -168,6 +127,7 @@ function winGame(cvs, winBlock) {
 function loseGame(cvs, loseBlock) {
 	motorSound.pause()
 	driveSound.pause()
+	loseSound.play()
 	clearInterval(gameReloadID)
 	cvs.style.display = 'none'
 	loseBlock.style.display = 'flex'
